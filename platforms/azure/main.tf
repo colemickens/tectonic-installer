@@ -77,6 +77,7 @@ module "etcd" {
 }
 
 # Workaround for https://github.com/hashicorp/terraform/issues/4084
+# TODO: updates to this don't seem to get pushed to the VM?
 data "null_data_source" "cloud_provider" {
   inputs = {
     "cloud"                      = "${var.tectonic_azure_cloud_environment}"
@@ -88,7 +89,10 @@ data "null_data_source" "cloud_provider" {
     "location"                   = "${var.tectonic_azure_location}"
     "subnetName"                 = "${module.vnet.worker_subnet_name}"
     "securityGroupName"          = "${module.vnet.worker_nsg_name}"
+    # TODO: This is going to be wrong for external VNET - for external VNET it looks like it will
+    # really be the full identifier, whereas in reality, this is a name normally...
     "vnetName"                   = "${module.vnet.vnet_id}"
+    "routeTableName"             = "${module.vnet.route_table_name}"
     "primaryAvailabilitySetName" = "${module.workers.availability_set_name}"
   }
 }

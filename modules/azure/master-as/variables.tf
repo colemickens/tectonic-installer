@@ -119,3 +119,9 @@ variable "cl_channel" {
 variable "extra_tags" {
   type = "map"
 }
+
+variable "network_plugin" {
+  type = "string"
+  #default = "cni"
+  default = "kubenet"
+}

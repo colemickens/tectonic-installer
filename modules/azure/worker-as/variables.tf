@@ -95,3 +95,9 @@ variable "kubelet_cni_bin_dir" {
 variable "extra_tags" {
   type = "map"
 }
+
+variable "network_plugin" {
+  type = "string"
+  #default = "cni"
+  default = "kubenet"
+}

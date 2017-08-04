@@ -58,6 +58,13 @@ variable "cloud_provider_config" {
   default     = ""
 }
 
+variable "configure_cloud_routes" {
+  description = "If set to true, configure cloud routes via cloudprovider."
+  type = "string"
+  default = "true" # how to compute based on the value of cni, or how to toggle them together
+  # TODO: should this probably be a bool type instead? I assume it just gets interpolated into the string val true/false
+}
+
 variable "service_cidr" {
   description = "A CIDR notation IP range from which to assign service cluster IPs"
   type        = "string"

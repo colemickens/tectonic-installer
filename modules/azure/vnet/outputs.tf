@@ -1,5 +1,14 @@
+# TODO:
+# 0. Rename, this is really a "vnet_name".
+# 1. This is how it's used in main.tf for the cloud_provider config
+# 2. This is an "ID" only when external vnet is used
+
 output "vnet_id" {
   value = "${var.external_vnet_id == "" ? join("",azurerm_virtual_network.tectonic_vnet.*.name) : var.external_vnet_id }"
+}
+
+output "route_table_name" {
+  value = "${azurerm_route_table.tectonic_route_table.name}"
 }
 
 output "master_subnet" {

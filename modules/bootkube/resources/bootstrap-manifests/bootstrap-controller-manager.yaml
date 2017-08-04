@@ -14,7 +14,7 @@ spec:
     - --cluster-cidr=${cluster_cidr}
     - --cloud-provider=${cloud_provider}
     ${cloud_provider_config_flag}
-    - --configure-cloud-routes=false
+    - --configure-cloud-routes=${configure_cloud_routes}
     - --leader-elect=true
     - --kubeconfig=/etc/kubernetes/kubeconfig
     - --root-ca-file=/etc/kubernetes/bootstrap-secrets/ca.crt
