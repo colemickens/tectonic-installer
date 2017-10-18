@@ -1,0 +1,71 @@
+apiVersion: apps/v1beta2
+kind: DaemonSet
+metadata:
+  name: cloud-controller-manager
+  namespace: kube-system
+  labels:
+    tier: control-plane
+    k8s-app: cloud-controller-manager
+    tectonic-operators.coreos.com/managed-by: kube-version-operator
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      tier: control-plane
+      k8s-app: cloud-controller-manager
+      tectonic-operators.coreos.com/managed-by: kube-version-operator
+  template:
+    metadata:
+      labels:
+        tier: control-plane
+        k8s-app: cloud-controller-manager
+        tectonic-operators.coreos.com/managed-by: kube-version-operator
+      annotations:
+        checkpointer.alpha.coreos.com/checkpoint: "true"
+    spec:
+      containers:
+      - name: cloud-controller-manager
+        image: ${hyperkube_image}
+        command:
+        - ./hyperkube
+        - cloud-controller-manager
+        - --cluster-name=kubernetes
+        - --cloud-provider=${cloud_provider}
+        ${cloud_provider_config_flag}
+        - --allocate-node-cidrs=true
+        - --configure-cloud-routes=false
+        - --cluster-cidr=${cluster_cidr}
+        - --leader-elect=true
+        - --kubeconfig=/etc/kubernetes/kubeconfig
+        - --v=4
+        volumeMounts:
+        - name: etc-kubernetes
+          mountPath: /etc/kubernetes
+          readOnly: true
+        - name: ssl-host
+          mountPath: /etc/ssl/certs
+          readOnly: true
+      hostNetwork: true
+      volumes:
+      - name: etc-kubernetes
+        hostPath:
+          path: /etc/kubernetes
+      - name: ssl-host
+        hostPath:
+          path: /usr/share/ca-certificates
+      tolerations:
+      # this is required so CCM can bootstrap itself
+      - key: node.cloudprovider.kubernetes.io/uninitialized
+        value: "true"
+        effect: NoSchedule
+      # this is to have the daemonset runnable on master nodes
+      # the taint may vary depending on your cluster setup
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      # this is to restrict CCM to only run on master nodes
+      # the node selector may vary depending on your cluster setup
+      nodeSelector:
+        node-role.kubernetes.io/master: ""

@@ -60,8 +60,7 @@ spec:
         - --oidc-username-claim=${oidc_username_claim}
         - --oidc-groups-claim=${oidc_groups_claim}
         - --oidc-ca-file=/etc/kubernetes/secrets/oidc-ca.crt
-        - --cloud-provider=${cloud_provider}
-        ${cloud_provider_config_flag}
+        - --cloud-provider=external
         - --audit-log-path=/var/log/kubernetes/kube-apiserver-audit.log
         - --audit-log-maxage=30
         - --audit-log-maxbackup=3

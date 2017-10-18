@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bootstrap-cloud-controller-manager
+  namespace: kube-system
+spec:
+  containers:
+    - name: cloud-controller-manager
+      image: ${hyperkube_image}
+      command: 
+        - ./hyperkube
+        - cloud-controller-manager
+        - --cluster-name=kubernetes
+        - --cloud-provider=${cloud_provider}
+        ${cloud_provider_config_flag}
+        - --allocate-node-cidrs=true
+        - --configure-cloud-routes=false
+        - --cluster-cidr=${cluster_cidr}
+        - --leader-elect=true
+        - --kubeconfig=/etc/kubernetes/kubeconfig
+        - --v=4
+      volumeMounts: 
+        - name: etc-kubernetes
+          mountPath: /etc/kubernetes
+          readOnly: true
+        - name: ssl-host
+          mountPath: /etc/ssl/certs
+          readOnly: true
+  hostNetwork: true
+  volumes:
+    - name: etc-kubernetes
+      hostPath:
+        path: /etc/kubernetes
+    - name: ssl-host
+      hostPath:
+        path: /usr/share/ca-certificates
