@@ -21,7 +21,13 @@ echo "CLUSTER: ${CLUSTER}"
 if [[ -z "${PLATFORM}" ]]; then echo "PLATFORM must be set"; fi
 echo "PLATFORM: ${PLATFORM}"
 
-if [[ "${PLATFORM}" == "azure" ]]; then
+if [[ "${PLATFORM}" == "gcp" ]]; then
+  #if [[ -f "$HOME/gcp.env" ]]; then source "$HOME/gcp.env"; fi
+  true
+elif [[ "${PLATFORM}" == "aws" ]]; then
+  #if [[ -f "$HOME/aws.env" ]]; then source "$HOME/aws.env"; fi
+  true
+elif [[ "${PLATFORM}" == "azure" ]]; then
   if [[ -f "$HOME/azure.env" ]]; then source "$HOME/azure.env"; fi
   
   # load ~/azure.env is available  
@@ -45,7 +51,6 @@ fi
 if [[ ! -d "${DIR}/build/${CLUSTER}" ]]; then
   make localconfig
 
-  AZURE_LOCATION="${AZURE_LOCATION:-westus}"
   SSH_KEY="${SSH_KEY:-"$HOME/.ssh/id_rsa.pub"}"
   ADMIN_EMAIL="${ADMIN_EMAIL:-admin@example.com}"
 
@@ -56,10 +61,14 @@ if [[ ! -d "${DIR}/build/${CLUSTER}" ]]; then
 
   sed -i "s|tectonic_admin_email = \"\"|tectonic_admin_email = \"${ADMIN_EMAIL}\"|g" "build/${CLUSTER}/terraform.tfvars"
   sed -i "s|tectonic_admin_password_hash = \"\"|tectonic_admin_password_hash = \"${ADMIN_PASSWORD_HASH}\"|g" "build/${CLUSTER}/terraform.tfvars"
-  sed -i "s|tectonic_azure_client_secret = \"\"|tectonic_azure_client_secret = \"${ARM_CLIENT_SECRET}\"|g" "build/${CLUSTER}/terraform.tfvars"
-  sed -i "s|tectonic_azure_location = \"\"|tectonic_azure_location = \"${AZURE_LOCATION}\"|g" "build/${CLUSTER}/terraform.tfvars"
-  sed -i "s|tectonic_azure_ssh_key = \"\"|tectonic_azure_ssh_key = \"${SSH_KEY}\"|g" "build/${CLUSTER}/terraform.tfvars"
   sed -i "s|tectonic_cluster_name = \"\"|tectonic_cluster_name = \"${CLUSTER}\"|g" "build/${CLUSTER}/terraform.tfvars"
+
+  if [[ "${PLATFORM}" == "azure" ]]; then
+    AZURE_LOCATION="${AZURE_LOCATION:-westus}"
+    sed -i "s|tectonic_azure_client_secret = \"\"|tectonic_azure_client_secret = \"${ARM_CLIENT_SECRET}\"|g" "build/${CLUSTER}/terraform.tfvars"
+    sed -i "s|tectonic_azure_location = \"\"|tectonic_azure_location = \"${AZURE_LOCATION}\"|g" "build/${CLUSTER}/terraform.tfvars"
+    sed -i "s|tectonic_azure_ssh_key = \"\"|tectonic_azure_ssh_key = \"${SSH_KEY}\"|g" "build/${CLUSTER}/terraform.tfvars"
+  fi
 
   # TODO: make this work with Tectonic license
   sed -i "s|tectonic_vanilla_k8s = false|tectonic_vanilla_k8s = true|g" "build/${CLUSTER}/terraform.tfvars"

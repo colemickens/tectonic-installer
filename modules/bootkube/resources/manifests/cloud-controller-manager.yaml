@@ -42,17 +42,23 @@ spec:
         - --kubeconfig=/etc/kubernetes/kubeconfig
         - --v=4
         volumeMounts:
-        - name: etc-kubernetes
-          mountPath: /etc/kubernetes
+        - name: etc-kubernetes-kubeconfig
+          mountPath: /etc/kubernetes/kubeconfig
+          readOnly: true
+        - mountPath: /etc/kubernetes/cloud
+          name: cloud-config
           readOnly: true
         - name: ssl-host
           mountPath: /etc/ssl/certs
           readOnly: true
       hostNetwork: true
       volumes:
-      - name: etc-kubernetes
+      - name: etc-kubernetes-kubeconfig
         hostPath:
-          path: /etc/kubernetes
+          path: /etc/kubernetes/kubeconfig
+      - name: cloud-config
+        secret:
+          secretName: kube-cloud-cfg
       - name: ssl-host
         hostPath:
           path: /usr/share/ca-certificates

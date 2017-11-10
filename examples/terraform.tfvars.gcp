@@ -202,3 +202,5 @@ tectonic_vanilla_k8s = false
 // The number of worker nodes to be created.
 // This applies only to cloud platforms.
 tectonic_worker_count = "3"
+
+tectonic_cl_channel = "stable"
