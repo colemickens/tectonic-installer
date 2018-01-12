@@ -45,20 +45,20 @@ fi
 if [[ ! -d "${DIR}/build/${CLUSTER}" ]]; then
   make localconfig
 
-  AZURE_LOCATION="${AZURE_LOCATION:-westus}"
+  #AZURE_LOCATION="${AZURE_LOCATION:-westus}"
   SSH_KEY="${SSH_KEY:-"$HOME/.ssh/id_rsa.pub"}"
   ADMIN_EMAIL="${ADMIN_EMAIL:-admin@example.com}"
 
-  if [[ "${ADMIN_PASSWORD_HASH:-}" == "" ]]; then
-    # hash is for "CoreOSrocksMySocks123@"
-    ADMIN_PASSWORD_HASH='$2a$10$RJWInIpb/mw7E0nj4V1HMeID1ju4LoZ7p1MF7/j/y3Rd1w1lbM5uy'
-  fi
+  ADMIN_PASSWORD="CoreOSrocksMySocks123@"
+  ADMIN_PASSWORD_HASH='$2a$10$RJWInIpb/mw7E0nj4V1HMeID1ju4LoZ7p1MF7/j/y3Rd1w1lbM5uy'
 
-  sed -i "s|tectonic_admin_email = \"\"|tectonic_admin_email = \"${ADMIN_EMAIL}\"|g" "build/${CLUSTER}/terraform.tfvars"
+  echo "tectonic_admin_email = \"${ADMIN_EMAIL}\"" >>"build/${CLUSTER}/terraform.tfvars"
+  echo "tectonic_admin_password = \"${ADMIN_PASSWORD}\"" >>"build/${CLUSTER}/terraform.tfvars"
+
   sed -i "s|tectonic_admin_password_hash = \"\"|tectonic_admin_password_hash = \"${ADMIN_PASSWORD_HASH}\"|g" "build/${CLUSTER}/terraform.tfvars"
-  sed -i "s|tectonic_azure_client_secret = \"\"|tectonic_azure_client_secret = \"${ARM_CLIENT_SECRET}\"|g" "build/${CLUSTER}/terraform.tfvars"
-  sed -i "s|tectonic_azure_location = \"\"|tectonic_azure_location = \"${AZURE_LOCATION}\"|g" "build/${CLUSTER}/terraform.tfvars"
-  sed -i "s|tectonic_azure_ssh_key = \"\"|tectonic_azure_ssh_key = \"${SSH_KEY}\"|g" "build/${CLUSTER}/terraform.tfvars"
+  #sed -i "s|tectonic_azure_client_secret = \"\"|tectonic_azure_client_secret = \"${ARM_CLIENT_SECRET}\"|g" "build/${CLUSTER}/terraform.tfvars"
+  #sed -i "s|tectonic_azure_location = \"\"|tectonic_azure_location = \"${AZURE_LOCATION}\"|g" "build/${CLUSTER}/terraform.tfvars"
+  #sed -i "s|tectonic_azure_ssh_key = \"\"|tectonic_azure_ssh_key = \"${SSH_KEY}\"|g" "build/${CLUSTER}/terraform.tfvars"
   sed -i "s|tectonic_cluster_name = \"\"|tectonic_cluster_name = \"${CLUSTER}\"|g" "build/${CLUSTER}/terraform.tfvars"
 
   # TODO: make this work with Tectonic license
